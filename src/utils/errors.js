@@ -1,18 +1,11 @@
-
-/** Operational error that the central error middleware turns into an HTTP response. */
-class AppError extends Error {
-  constructor(status, code, message, details) {
-    super(message);
-    this.name = 'AppError';
-    this.status = status;
-    this.code = code;
-    this.details = details;
-  }
+// Makes an Error that also carries an HTTP status and a short code.
+// The central error middleware (middlewares/errorHandler.js) turns it into a JSON response.
+function createError(status, code, message, details) {
+  const error = new Error(message);
+  error.status = status;
+  error.code = code;
+  error.details = details;
+  return error;
 }
 
-const badRequest = (message, details) => new AppError(400, 'VALIDATION_ERROR', message, details);
-const notFound   = (what, id) => new AppError(404, 'NOT_FOUND', `${what} ${id !== undefined ? `with id ${id} ` : ''}not found`);
-const conflict   = (code, message, details) => new AppError(409, code, message, details);
-const unprocessable = (code, message, details) => new AppError(422, code, message, details);
-
-module.exports = { AppError, badRequest, notFound, conflict, unprocessable };
+module.exports = { createError };
