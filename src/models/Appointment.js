@@ -21,11 +21,6 @@ async function getAppointmentById(id) {
 
 // Books a slot inside ONE transaction.
 
-// Why it is safe when two requests arrive at the same instant:
-//  1. "SELECT ... FOR UPDATE" locks the doctor's row, so a second booking for the same doctor
-//     has to WAIT until the first one has finished.
-//  2. As a final safety net, the UNIQUE key (doctor_id, active_slot) in schema.sql makes MySQL
-//     itself refuse a second active appointment for the same doctor and time.
 async function bookAppointment(patientId, doctorId, apptDatetime, day, dailyCap) {
   const connection = await pool.getConnection();
   try {
