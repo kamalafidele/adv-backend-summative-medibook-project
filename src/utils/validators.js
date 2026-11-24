@@ -80,3 +80,30 @@ function validateDoctor(body) {
 
   return { errors: errors, data: { name: name, specialty: specialty, consultation_fee: fee, room: room } };
 }
+
+function validateBooking(body) {
+  const errors = [];
+  if (!body || typeof body !== 'object') {
+    return { errors: ['Request body must be a JSON object'], data: {} };
+  }
+
+  if (!isValidId(body.patient_id)) {
+    errors.push('patient_id must be a positive whole number');
+  }
+  if (!isValidId(body.doctor_id)) {
+    errors.push('doctor_id must be a positive whole number');
+  }
+  if (body.join_waitlist !== undefined && typeof body.join_waitlist !== 'boolean') {
+    errors.push('join_waitlist must be true or false');
+  }
+
+  const data = {
+    patientId: Number(body.patient_id),
+    doctorId: Number(body.doctor_id),
+    joinWaitlist: body.join_waitlist === true,
+    appointmentDatetime: body.appointment_datetime,
+  };
+  return { errors: errors, data: data };
+}
+
+module.exports = { isValidId, validatePatient, validateDoctor, validateBooking };
